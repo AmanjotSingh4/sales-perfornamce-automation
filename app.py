@@ -1,27 +1,17 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mtick
+import io
 
-from preprocess import clean_data
-from analysis import compute_metrics
-from report_generator import generate_report
-
-
-# ---------------------------------------------------
-# PAGE CONFIG
-# ---------------------------------------------------
 st.set_page_config(page_title="Sales Dashboard", layout="wide")
 
 st.title("📊 Sales Performance Dashboard")
-st.caption("Upload a transactional sales dataset to generate automated performance insights.")
+st.markdown("Upload a transactional sales dataset to generate automated performance insights.")
 
-st.markdown("---")
-
-
-# ---------------------------------------------------
+# ------------------------------------------------
 # FILE UPLOAD
-# ---------------------------------------------------
+# ------------------------------------------------
+
 uploaded_file = st.file_uploader(
     "Upload your sales CSV file",
     type=["csv"]
@@ -31,29 +21,24 @@ if uploaded_file is None:
     st.info("Please upload a CSV file to begin analysis.")
     st.stop()
 
+# ------------------------------------------------
+# SAFE FILE READING (NO POINTER ISSUES)
+# ------------------------------------------------
 
-# ---------------------------------------------------
-# LOAD DATA SAFELY
-# ---------------------------------------------------
 try:
-    df = pd.read_csv(uploaded_file, encoding="utf-8")
-except UnicodeDecodeError:
-    try:
-        df = pd.read_csv(uploaded_file, encoding="latin1")
-    except:
-        st.error("❌ Unable to read the uploaded file. Please upload a valid CSV.")
-        st.stop()
+    file_bytes = uploaded_file.getvalue()
+    df = pd.read_csv(io.BytesIO(file_bytes))
 except Exception:
-    st.error("❌ Unable to read the uploaded file. Please upload a valid CSV.")
+    st.error("❌ Failed to read the uploaded file. Please upload a valid CSV file.")
     st.stop()
 
-# Clean column names (important!)
+# Clean column names
 df.columns = df.columns.str.strip()
 
+# ------------------------------------------------
+# VALIDATION
+# ------------------------------------------------
 
-# ---------------------------------------------------
-# REQUIRED COLUMN VALIDATION
-# ---------------------------------------------------
 required_columns = [
     "Region",
     "Country",
@@ -64,59 +49,47 @@ required_columns = [
     "Total Profit"
 ]
 
-if uploaded_file is not None:
-    try:
-        df = pd.read_csv(uploaded_file)
+missing_columns = [col for col in required_columns if col not in df.columns]
 
-        # Check required columns
-        missing_cols = [col for col in required_columns if col not in df.columns]
+if missing_columns:
+    st.error(f"❌ Missing required columns: {', '.join(missing_columns)}")
+    st.stop()
 
-        if missing_cols:
-            st.error(
-                f"❌ This dataset is missing required columns: {', '.join(missing_cols)}"
-            )
-            st.stop()
+# Convert date safely
+try:
+    df["Order Date"] = pd.to_datetime(df["Order Date"])
+except Exception:
+    st.error("❌ 'Order Date' must contain valid date values.")
+    st.stop()
 
-        # Convert Order Date safely
-        try:
-            df["Order Date"] = pd.to_datetime(df["Order Date"])
-        except:
-            st.error("❌ 'Order Date' column must contain valid date values.")
-            st.stop()
+# Ensure numeric columns
+numeric_cols = ["Total Revenue", "Total Profit"]
 
-    except Exception as e:
-        st.error("❌ Failed to read the uploaded file. Please upload a valid CSV file.")
-        st.stop()
-
-numeric_columns = ["Total Revenue", "Total Profit"]
-
-for col in numeric_columns:
+for col in numeric_cols:
     if not pd.api.types.is_numeric_dtype(df[col]):
         st.error(f"❌ Column '{col}' must contain numeric values.")
         st.stop()
 
-# ---------------------------------------------------
-# CLEAN DATA
-# ---------------------------------------------------
-df = clean_data(df)
+# ------------------------------------------------
+# KPI CALCULATIONS
+# ------------------------------------------------
 
+total_revenue = df["Total Revenue"].sum()
+total_profit = df["Total Profit"].sum()
+avg_profit = df["Total Profit"].mean()
 
-# ---------------------------------------------------
-# COMPUTE METRICS
-# ---------------------------------------------------
-metrics = compute_metrics(df)
+profit_margin = (total_profit / total_revenue) * 100 if total_revenue != 0 else 0
 
-total_revenue = metrics["total_revenue"]
-total_profit = metrics["total_profit"]
-avg_profit = metrics["avg_profit"]
-most_profitable_region = metrics["most_profitable_region"]
-most_profitable_item = metrics["most_profitable_item"]
+most_profitable_region = df.groupby("Region")["Total Profit"].sum().idxmax()
+most_profitable_item = df.groupby("Item Type")["Total Profit"].sum().idxmax()
 
+sales_channel_revenue = df.groupby("Sales Channel")["Total Revenue"].sum()
 
-# ---------------------------------------------------
+# ------------------------------------------------
 # EXECUTIVE SUMMARY
-# ---------------------------------------------------
-st.markdown("## 📊 Executive Summary")
+# ------------------------------------------------
+
+st.subheader("📊 Executive Summary")
 
 col1, col2, col3 = st.columns(3)
 
@@ -124,104 +97,68 @@ col1.metric("Total Revenue", f"${total_revenue:,.2f}")
 col2.metric("Total Profit", f"${total_profit:,.2f}")
 col3.metric("Average Profit per Order", f"${avg_profit:,.2f}")
 
-st.success(f"""
-**Most Profitable Region:** {most_profitable_region}  
-**Most Profitable Item Type:** {most_profitable_item}
-""")
+st.success(
+    f"""
+Most Profitable Region: {most_profitable_region}  
+Most Profitable Item Type: {most_profitable_item}  
+Overall Profit Margin: {profit_margin:.2f}%
+"""
+)
 
-st.markdown("---")
+# ------------------------------------------------
+# MONTHLY TRENDS
+# ------------------------------------------------
 
+df["Year-Month"] = df["Order Date"].dt.to_period("M").astype(str)
 
-# ---------------------------------------------------
-# GENERATE REPORT SAFELY
-# ---------------------------------------------------
-try:
-    report_text = generate_report(df, metrics)
-except Exception as e:
-    st.error(f"Report generation failed: {e}")
-    st.stop()
+monthly_revenue = df.groupby("Year-Month")["Total Revenue"].sum()
+monthly_profit = df.groupby("Year-Month")["Total Profit"].sum()
 
+st.subheader("📈 Monthly Revenue")
 
-# ---------------------------------------------------
-# DOWNLOAD BUTTON (ALWAYS VISIBLE)
-# ---------------------------------------------------
-st.subheader("📥 Export Executive Report")
+fig1, ax1 = plt.subplots()
+monthly_revenue.plot(ax=ax1)
+ax1.set_ylabel("Revenue")
+st.pyplot(fig1)
+
+st.subheader("📉 Monthly Profit")
+
+fig2, ax2 = plt.subplots()
+monthly_profit.plot(ax=ax2)
+ax2.set_ylabel("Profit")
+st.pyplot(fig2)
+
+# ------------------------------------------------
+# REVENUE BY SALES CHANNEL
+# ------------------------------------------------
+
+st.subheader("🛒 Revenue by Sales Channel")
+
+fig3, ax3 = plt.subplots()
+sales_channel_revenue.plot(kind="bar", ax=ax3)
+ax3.set_ylabel("Total Revenue")
+st.pyplot(fig3)
+
+# ------------------------------------------------
+# DOWNLOAD REPORT
+# ------------------------------------------------
+
+report_text = f"""
+SALES PERFORMANCE REPORT
+------------------------
+Total Revenue: ${total_revenue:,.2f}
+Total Profit: ${total_profit:,.2f}
+Average Profit per Order: ${avg_profit:,.2f}
+
+Most Profitable Region: {most_profitable_region}
+Most Profitable Item Type: {most_profitable_item}
+
+Overall Profit Margin: {profit_margin:.2f}%
+"""
 
 st.download_button(
-    label="Download Executive Report",
+    label="📄 Download Executive Report",
     data=report_text,
     file_name="sales_report.txt",
     mime="text/plain"
 )
-
-st.markdown("---")
-
-
-# ---------------------------------------------------
-# MONTHLY TRENDS
-# ---------------------------------------------------
-st.subheader("📈 Monthly Performance Trends")
-
-df['Year-Month'] = pd.to_datetime(df['Order Date']).dt.to_period('M')
-
-monthly_revenue = df.groupby('Year-Month')['Total Revenue'].sum()
-monthly_profit = df.groupby('Year-Month')['Total Profit'].sum()
-
-col1, col2 = st.columns(2)
-
-with col1:
-    st.markdown("### Monthly Revenue")
-    fig, ax = plt.subplots(figsize=(6, 3))
-    monthly_revenue.plot(ax=ax)
-    ax.set_ylabel("Revenue")
-    ax.tick_params(axis='x', rotation=45)
-    ax.yaxis.set_major_formatter(mtick.StrMethodFormatter('${x:,.0f}'))
-    st.pyplot(fig, use_container_width=True)
-
-with col2:
-    st.markdown("### Monthly Profit")
-    fig, ax = plt.subplots(figsize=(6, 3))
-    monthly_profit.plot(ax=ax)
-    ax.set_ylabel("Profit")
-    ax.tick_params(axis='x', rotation=45)
-    ax.yaxis.set_major_formatter(mtick.StrMethodFormatter('${x:,.0f}'))
-    st.pyplot(fig, use_container_width=True)
-
-st.markdown("---")
-
-
-# ---------------------------------------------------
-# SALES CHANNEL PERFORMANCE
-# ---------------------------------------------------
-st.subheader("🛒 Revenue by Sales Channel")
-
-sales_by_channel = df.groupby('Sales Channel')['Total Revenue'].sum()
-
-fig, ax = plt.subplots(figsize=(5, 3))
-sales_by_channel.plot(kind='bar', ax=ax)
-ax.set_ylabel("Revenue")
-ax.tick_params(axis='x', rotation=0)
-ax.yaxis.set_major_formatter(mtick.StrMethodFormatter('${x:,.0f}'))
-st.pyplot(fig, use_container_width=True)
-
-st.markdown("---")
-
-
-# ---------------------------------------------------
-# TOP 5 COUNTRIES
-# ---------------------------------------------------
-st.subheader("🌍 Top 5 Countries by Revenue")
-
-top_countries = (
-    df.groupby('Country')['Total Revenue']
-    .sum()
-    .sort_values(ascending=False)
-    .head(5)
-)
-
-fig, ax = plt.subplots(figsize=(6, 3))
-top_countries.plot(kind='bar', ax=ax)
-ax.set_ylabel("Revenue")
-ax.tick_params(axis='x', rotation=45)
-ax.yaxis.set_major_formatter(mtick.StrMethodFormatter('${x:,.0f}'))
-st.pyplot(fig, use_container_width=True)
