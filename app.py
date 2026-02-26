@@ -5,6 +5,8 @@ import matplotlib.ticker as mtick
 
 from preprocess import clean_data
 from analysis import compute_metrics
+from report_generator import generate_report
+
 
 # ---------------------------------------------------
 # PAGE CONFIG
@@ -15,6 +17,7 @@ st.title("📊 Sales Performance Dashboard")
 st.caption("Upload a transactional sales dataset to generate automated performance insights.")
 
 st.markdown("---")
+
 
 # ---------------------------------------------------
 # FILE UPLOAD
@@ -28,10 +31,25 @@ if uploaded_file is None:
     st.info("Please upload a CSV file to begin analysis.")
     st.stop()
 
+
 # ---------------------------------------------------
-# LOAD DATA
+# LOAD DATA SAFELY
 # ---------------------------------------------------
-df = pd.read_csv(uploaded_file)
+try:
+    df = pd.read_csv(uploaded_file, encoding="utf-8")
+except UnicodeDecodeError:
+    try:
+        df = pd.read_csv(uploaded_file, encoding="latin1")
+    except:
+        st.error("❌ Unable to read the uploaded file. Please upload a valid CSV.")
+        st.stop()
+except Exception:
+    st.error("❌ Unable to read the uploaded file. Please upload a valid CSV.")
+    st.stop()
+
+# Clean column names (important!)
+df.columns = df.columns.str.strip()
+
 
 # ---------------------------------------------------
 # REQUIRED COLUMN VALIDATION
@@ -42,23 +60,46 @@ required_columns = [
     "Item Type",
     "Sales Channel",
     "Order Date",
-    "Ship Date",
     "Total Revenue",
     "Total Profit"
 ]
 
-missing_columns = [col for col in required_columns if col not in df.columns]
+if uploaded_file is not None:
+    try:
+        df = pd.read_csv(uploaded_file)
 
-if missing_columns:
-    st.error(
-        f"This dataset must contain the following columns: {', '.join(required_columns)}"
-    )
-    st.stop()
+        # Check required columns
+        missing_cols = [col for col in required_columns if col not in df.columns]
+
+        if missing_cols:
+            st.error(
+                f"❌ This dataset is missing required columns: {', '.join(missing_cols)}"
+            )
+            st.stop()
+
+        # Convert Order Date safely
+        try:
+            df["Order Date"] = pd.to_datetime(df["Order Date"])
+        except:
+            st.error("❌ 'Order Date' column must contain valid date values.")
+            st.stop()
+
+    except Exception as e:
+        st.error("❌ Failed to read the uploaded file. Please upload a valid CSV file.")
+        st.stop()
+
+numeric_columns = ["Total Revenue", "Total Profit"]
+
+for col in numeric_columns:
+    if not pd.api.types.is_numeric_dtype(df[col]):
+        st.error(f"❌ Column '{col}' must contain numeric values.")
+        st.stop()
 
 # ---------------------------------------------------
 # CLEAN DATA
 # ---------------------------------------------------
 df = clean_data(df)
+
 
 # ---------------------------------------------------
 # COMPUTE METRICS
@@ -70,6 +111,7 @@ total_profit = metrics["total_profit"]
 avg_profit = metrics["avg_profit"]
 most_profitable_region = metrics["most_profitable_region"]
 most_profitable_item = metrics["most_profitable_item"]
+
 
 # ---------------------------------------------------
 # EXECUTIVE SUMMARY
@@ -89,9 +131,37 @@ st.success(f"""
 
 st.markdown("---")
 
+
+# ---------------------------------------------------
+# GENERATE REPORT SAFELY
+# ---------------------------------------------------
+try:
+    report_text = generate_report(df, metrics)
+except Exception as e:
+    st.error(f"Report generation failed: {e}")
+    st.stop()
+
+
+# ---------------------------------------------------
+# DOWNLOAD BUTTON (ALWAYS VISIBLE)
+# ---------------------------------------------------
+st.subheader("📥 Export Executive Report")
+
+st.download_button(
+    label="Download Executive Report",
+    data=report_text,
+    file_name="sales_report.txt",
+    mime="text/plain"
+)
+
+st.markdown("---")
+
+
 # ---------------------------------------------------
 # MONTHLY TRENDS
 # ---------------------------------------------------
+st.subheader("📈 Monthly Performance Trends")
+
 df['Year-Month'] = pd.to_datetime(df['Order Date']).dt.to_period('M')
 
 monthly_revenue = df.groupby('Year-Month')['Total Revenue'].sum()
@@ -100,7 +170,7 @@ monthly_profit = df.groupby('Year-Month')['Total Profit'].sum()
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("📈 Monthly Revenue")
+    st.markdown("### Monthly Revenue")
     fig, ax = plt.subplots(figsize=(6, 3))
     monthly_revenue.plot(ax=ax)
     ax.set_ylabel("Revenue")
@@ -109,7 +179,7 @@ with col1:
     st.pyplot(fig, use_container_width=True)
 
 with col2:
-    st.subheader("📉 Monthly Profit")
+    st.markdown("### Monthly Profit")
     fig, ax = plt.subplots(figsize=(6, 3))
     monthly_profit.plot(ax=ax)
     ax.set_ylabel("Profit")
@@ -118,6 +188,7 @@ with col2:
     st.pyplot(fig, use_container_width=True)
 
 st.markdown("---")
+
 
 # ---------------------------------------------------
 # SALES CHANNEL PERFORMANCE
@@ -134,6 +205,7 @@ ax.yaxis.set_major_formatter(mtick.StrMethodFormatter('${x:,.0f}'))
 st.pyplot(fig, use_container_width=True)
 
 st.markdown("---")
+
 
 # ---------------------------------------------------
 # TOP 5 COUNTRIES

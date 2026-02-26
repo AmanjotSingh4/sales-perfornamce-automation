@@ -1,93 +1,178 @@
-# 📊 Sales Performance Analytics Dashboard
+# 📊 Sales Performance Automation Dashboard
 
-## 📌 Project Overview
+An interactive, product-oriented sales analytics tool built using **Streamlit** that allows non-technical users to upload transactional sales data and automatically generate executive insights, KPIs, visualizations, and downloadable reports.
 
-This project analyzes global transactional sales data to generate structured business insights, key performance indicators (KPIs), and an interactive executive dashboard.
-
-The goal was to transform raw CSV sales data into actionable intelligence suitable for business stakeholders.
-
-The project includes:
-
-- Data cleaning and preprocessing
-- KPI computation
-- Business insight generation
-- Automated executive report creation
-- Interactive Streamlit dashboard
+This project demonstrates the transition from a simple data analysis script to a user-ready analytics product.
 
 ---
 
-## 🖼 Dashboard Preview
+## 🚀 Project Overview
 
-![Dashboard Preview](dashboard_preview.png)
+This dashboard enables users to:
 
-> *Interactive dashboard built using Streamlit displaying KPIs, trends, and profitability insights.*
+- Upload their own CSV sales dataset
+- Automatically validate and process the data
+- Generate business-ready executive summaries
+- Visualize revenue and profit trends
+- Download an automated executive report
 
----
-
-## 🗂 Dataset Description
-
-The dataset contains transactional sales records including:
-
-- Region
-- Country
-- Item Type
-- Sales Channel (Online / Offline)
-- Order Date & Ship Date
-- Units Sold
-- Unit Price & Unit Cost
-- Total Revenue
-- Total Cost
-- Total Profit
-
-The dataset contains mixed categorical, numerical, and time-series data.
+The goal is to combine **data processing, validation, business insight generation, and presentation** into a single usable tool.
 
 ---
 
-## ⚙️ Data Processing & Cleaning
+## ✨ Key Features
 
-The following preprocessing steps were performed:
+### 📁 File Upload Capability
+Users can upload their own sales dataset (CSV format).  
+The app automatically processes the file.
 
-- Loaded CSV using pandas
-- Inspected dataset using `.head()` and `.info()`
-- Converted `Order Date` and `Ship Date` to datetime
-- Ensured numeric columns were properly typed
-- Handled missing values
-- Removed duplicate rows
-- Saved cleaned dataset as `cleaned_data.csv`
+### 🧹 Data Validation & Error Handling
+The application validates:
+- Required columns
+- Date formats
+- Numeric fields
+- File encoding issues
 
----
+User-friendly error messages are displayed instead of Python stack traces.
 
-## 📈 Key Business Insights Generated
-
-The system automatically computes:
-
+### 📊 Executive Summary
+Displays:
 - Total Revenue
 - Total Profit
 - Average Profit per Order
 - Most Profitable Region
 - Most Profitable Item Type
-- Revenue by Sales Channel
-- Top 5 Countries by Revenue
+
+Designed in a business-friendly format.
+
+### 📈 Visual Analytics
+Includes:
 - Monthly Revenue Trend
 - Monthly Profit Trend
-- Profit Margin
+- Revenue by Sales Channel (Online vs Offline)
+- Top 5 Countries by Revenue
 
-Insights are exported automatically into a formatted `report.txt`.
+### 📄 Downloadable Executive Report
+Users can download a generated report summarizing key insights.
 
 ---
 
-## 📊 Interactive Dashboard Features
+## 🖼 Dashboard Preview
 
-The Streamlit dashboard includes:
+![Dashboard Preview](dashboard_v2.png)
 
-- KPI metric cards
-- Monthly revenue & profit trends
-- Revenue by sales channel
-- Top 5 countries by revenue
-- Profitability insights
-- Sidebar filters (Region, Sales Channel)
+---
 
-To run locally:
+## 🗂 Project Structure
+sales-performance-automation/
+│
+├── data/
+│ └── sales.csv
+│
+├── output/
+│ ├── cleaned_data.csv
+│ └── report.txt
+│
+├── app.py
+├── analysis.ipynb
+├── requirements.txt
+├── dashboard_v2.png
+└── README.md
 
-```bash
-python -m streamlit run app.py
+
+---
+
+## 📂 Required Dataset Columns
+
+The uploaded CSV must contain the following columns:
+
+- Region
+- Country
+- Item Type
+- Sales Channel
+- Order Date
+- Total Revenue
+- Total Profit
+
+If required columns are missing, the app will display a clear validation message.
+
+---
+
+## 🛠 Technologies Used
+
+- Python
+- Pandas
+- Streamlit
+- Matplotlib
+
+---
+
+## 🎯 Business Objective
+
+This project was designed to shift from:
+
+> "Code that analyzes data"
+
+To:
+
+> "A usable analytics product for non-technical stakeholders."
+
+It emphasizes:
+- Clean architecture
+- Separation of preprocessing and presentation layers
+- User validation and error handling
+- Executive-ready reporting
+
+---
+
+## 🔮 Future Improvements
+
+- Add sales forecasting module
+- Deploy publicly via Streamlit Cloud
+- Add user-controlled filters
+- Replace Matplotlib with interactive Plotly charts
+- Add downloadable PDF executive report
+- Add multi-file comparison capability
+
+---
+
+## 📌 How to Run Locally
+
+1. Clone the repository:
+git clone
+
+
+2. Navigate into the folder:
+
+
+cd sales-performance-automation
+
+
+3. Install dependencies:
+
+
+pip install -r requirements.txt
+
+
+4. Run the app:
+
+
+streamlit run app.py
+
+
+---
+
+## 💼 Portfolio Note
+
+This project demonstrates:
+
+- Data cleaning & preprocessing
+- KPI computation
+- Business insight generation
+- Validation & robust error handling
+- Dashboard development
+- Product-oriented thinking
+
+It is structured as a portfolio-ready analytics product.
+
+---
