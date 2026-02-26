@@ -3,63 +3,97 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
+from preprocess import clean_data
+from analysis import compute_metrics
+
 # ---------------------------------------------------
 # PAGE CONFIG
 # ---------------------------------------------------
 st.set_page_config(page_title="Sales Dashboard", layout="wide")
 
 st.title("📊 Sales Performance Dashboard")
+st.caption("Upload a transactional sales dataset to generate automated performance insights.")
+
+st.markdown("---")
+
+# ---------------------------------------------------
+# FILE UPLOAD
+# ---------------------------------------------------
+uploaded_file = st.file_uploader(
+    "Upload your sales CSV file",
+    type=["csv"]
+)
+
+if uploaded_file is None:
+    st.info("Please upload a CSV file to begin analysis.")
+    st.stop()
 
 # ---------------------------------------------------
 # LOAD DATA
 # ---------------------------------------------------
-df = pd.read_csv("sales.csv")
-
-df['Order Date'] = pd.to_datetime(df['Order Date'])
+df = pd.read_csv(uploaded_file)
 
 # ---------------------------------------------------
-# SIDEBAR FILTERS
+# REQUIRED COLUMN VALIDATION
 # ---------------------------------------------------
-st.sidebar.header("🔎 Filters")
-
-region_filter = st.sidebar.multiselect(
-    "Select Region",
-    options=df['Region'].unique(),
-    default=df['Region'].unique()
-)
-
-channel_filter = st.sidebar.multiselect(
-    "Select Sales Channel",
-    options=df['Sales Channel'].unique(),
-    default=df['Sales Channel'].unique()
-)
-
-df = df[
-    (df['Region'].isin(region_filter)) &
-    (df['Sales Channel'].isin(channel_filter))
+required_columns = [
+    "Region",
+    "Country",
+    "Item Type",
+    "Sales Channel",
+    "Order Date",
+    "Ship Date",
+    "Total Revenue",
+    "Total Profit"
 ]
 
-# ---------------------------------------------------
-# KPI SECTION
-# ---------------------------------------------------
-total_revenue = df['Total Revenue'].sum()
-total_profit = df['Total Profit'].sum()
-avg_profit = df['Total Profit'].mean()
-profit_margin = (total_profit / total_revenue) * 100 if total_revenue != 0 else 0
+missing_columns = [col for col in required_columns if col not in df.columns]
 
-col1, col2, col3, col4 = st.columns(4)
+if missing_columns:
+    st.error(
+        f"This dataset must contain the following columns: {', '.join(required_columns)}"
+    )
+    st.stop()
+
+# ---------------------------------------------------
+# CLEAN DATA
+# ---------------------------------------------------
+df = clean_data(df)
+
+# ---------------------------------------------------
+# COMPUTE METRICS
+# ---------------------------------------------------
+metrics = compute_metrics(df)
+
+total_revenue = metrics["total_revenue"]
+total_profit = metrics["total_profit"]
+avg_profit = metrics["avg_profit"]
+most_profitable_region = metrics["most_profitable_region"]
+most_profitable_item = metrics["most_profitable_item"]
+
+# ---------------------------------------------------
+# EXECUTIVE SUMMARY
+# ---------------------------------------------------
+st.markdown("## 📊 Executive Summary")
+
+col1, col2, col3 = st.columns(3)
 
 col1.metric("Total Revenue", f"${total_revenue:,.2f}")
 col2.metric("Total Profit", f"${total_profit:,.2f}")
-col3.metric("Avg Profit / Order", f"${avg_profit:,.2f}")
-col4.metric("Profit Margin", f"{profit_margin:.2f}%")
+col3.metric("Average Profit per Order", f"${avg_profit:,.2f}")
+
+st.success(f"""
+**Most Profitable Region:** {most_profitable_region}  
+**Most Profitable Item Type:** {most_profitable_item}
+""")
 
 st.markdown("---")
 
 # ---------------------------------------------------
 # MONTHLY TRENDS
 # ---------------------------------------------------
-df['Year-Month'] = df['Order Date'].dt.to_period('M')
+df['Year-Month'] = pd.to_datetime(df['Order Date']).dt.to_period('M')
+
 monthly_revenue = df.groupby('Year-Month')['Total Revenue'].sum()
 monthly_profit = df.groupby('Year-Month')['Total Profit'].sum()
 
@@ -70,7 +104,6 @@ with col1:
     fig, ax = plt.subplots(figsize=(6, 3))
     monthly_revenue.plot(ax=ax)
     ax.set_ylabel("Revenue")
-    ax.set_xlabel("")
     ax.tick_params(axis='x', rotation=45)
     ax.yaxis.set_major_formatter(mtick.StrMethodFormatter('${x:,.0f}'))
     st.pyplot(fig, use_container_width=True)
@@ -80,7 +113,6 @@ with col2:
     fig, ax = plt.subplots(figsize=(6, 3))
     monthly_profit.plot(ax=ax)
     ax.set_ylabel("Profit")
-    ax.set_xlabel("")
     ax.tick_params(axis='x', rotation=45)
     ax.yaxis.set_major_formatter(mtick.StrMethodFormatter('${x:,.0f}'))
     st.pyplot(fig, use_container_width=True)
@@ -97,7 +129,6 @@ sales_by_channel = df.groupby('Sales Channel')['Total Revenue'].sum()
 fig, ax = plt.subplots(figsize=(5, 3))
 sales_by_channel.plot(kind='bar', ax=ax)
 ax.set_ylabel("Revenue")
-ax.set_xlabel("")
 ax.tick_params(axis='x', rotation=0)
 ax.yaxis.set_major_formatter(mtick.StrMethodFormatter('${x:,.0f}'))
 st.pyplot(fig, use_container_width=True)
@@ -119,31 +150,6 @@ top_countries = (
 fig, ax = plt.subplots(figsize=(6, 3))
 top_countries.plot(kind='bar', ax=ax)
 ax.set_ylabel("Revenue")
-ax.set_xlabel("")
 ax.tick_params(axis='x', rotation=45)
 ax.yaxis.set_major_formatter(mtick.StrMethodFormatter('${x:,.0f}'))
 st.pyplot(fig, use_container_width=True)
-
-st.markdown("---")
-
-# ---------------------------------------------------
-# PROFITABILITY INSIGHTS
-# ---------------------------------------------------
-st.subheader("🏆 Profitability Insights")
-
-most_profitable_region = (
-    df.groupby('Region')['Total Profit']
-    .sum()
-    .idxmax()
-)
-
-most_profitable_item = (
-    df.groupby('Item Type')['Total Profit']
-    .sum()
-    .idxmax()
-)
-
-col1, col2 = st.columns(2)
-
-col1.info(f"Most Profitable Region: **{most_profitable_region}**")
-col2.info(f"Most Profitable Item Type: **{most_profitable_item}**")

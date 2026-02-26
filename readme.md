@@ -2,9 +2,9 @@
 
 ## 📌 Project Overview
 
-This project analyzes global transactional sales data to generate business insights, key performance indicators (KPIs), and an interactive executive dashboard.
+This project analyzes global transactional sales data to generate structured business insights, key performance indicators (KPIs), and an interactive executive dashboard.
 
-The objective was to transform raw CSV sales data into structured, actionable intelligence suitable for business decision-making.
+The goal was to transform raw CSV sales data into actionable intelligence suitable for business stakeholders.
 
 The project includes:
 
@@ -12,7 +12,15 @@ The project includes:
 - KPI computation
 - Business insight generation
 - Automated executive report creation
-- Interactive Streamlit dashboard for stakeholders
+- Interactive Streamlit dashboard
+
+---
+
+## 🖼 Dashboard Preview
+
+![Dashboard Preview](dashboard_preview.png)
+
+> *Interactive dashboard built using Streamlit displaying KPIs, trends, and profitability insights.*
 
 ---
 
@@ -31,7 +39,7 @@ The dataset contains transactional sales records including:
 - Total Cost
 - Total Profit
 
-The data includes mixed categorical, numerical, and time-series features.
+The dataset contains mixed categorical, numerical, and time-series data.
 
 ---
 
@@ -41,10 +49,10 @@ The following preprocessing steps were performed:
 
 - Loaded CSV using pandas
 - Inspected dataset using `.head()` and `.info()`
-- Converted `Order Date` and `Ship Date` to datetime format
+- Converted `Order Date` and `Ship Date` to datetime
 - Ensured numeric columns were properly typed
 - Handled missing values
-- Removed duplicate records
+- Removed duplicate rows
 - Saved cleaned dataset as `cleaned_data.csv`
 
 ---
@@ -53,43 +61,31 @@ The following preprocessing steps were performed:
 
 The system automatically computes:
 
-- ✅ Total Revenue
-- ✅ Total Profit
-- ✅ Average Profit per Order
-- ✅ Most Profitable Region
-- ✅ Most Profitable Item Type
-- ✅ Revenue by Sales Channel
-- ✅ Top 5 Countries by Revenue
-- ✅ Monthly Revenue Trend
-- ✅ Monthly Profit Trend
-- ✅ Profit Margin
+- Total Revenue
+- Total Profit
+- Average Profit per Order
+- Most Profitable Region
+- Most Profitable Item Type
+- Revenue by Sales Channel
+- Top 5 Countries by Revenue
+- Monthly Revenue Trend
+- Monthly Profit Trend
+- Profit Margin
 
-### Example Insight
-
-- Offline sales generated significantly more revenue than online sales.
-- Cosmetics emerged as the most profitable product category.
-- Certain regions consistently outperform others in profitability.
-
-All insights are automatically exported to a formatted `report.txt`.
+Insights are exported automatically into a formatted `report.txt`.
 
 ---
 
-## 📊 Interactive Dashboard (Streamlit)
+## 📊 Interactive Dashboard Features
 
-A professional interactive dashboard was built using Streamlit.
+The Streamlit dashboard includes:
 
-### Dashboard Features:
-
-- KPI metrics display
+- KPI metric cards
 - Monthly revenue & profit trends
 - Revenue by sales channel
 - Top 5 countries by revenue
 - Profitability insights
-- Sidebar filters for:
-  - Region
-  - Sales Channel
-
-The dashboard provides a stakeholder-friendly interface and does not expose code.
+- Sidebar filters (Region, Sales Channel)
 
 To run locally:
 
