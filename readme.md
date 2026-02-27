@@ -1,8 +1,14 @@
-# 📊 Sales Performance Automation Dashboard
+# 📊 Sales Performance Analytics Dashboard
 
-An interactive, product-oriented sales analytics tool built using **Streamlit** that allows non-technical users to upload transactional sales data and automatically generate executive insights, KPIs, visualizations, and downloadable reports.
+A branded, production-ready analytics dashboard built using **Streamlit** that allows non-technical users to upload transactional sales data and instantly generate executive insights, KPIs, and visual reports.
 
-This project demonstrates the transition from a simple data analysis script to a user-ready analytics product.
+This project demonstrates the transition from a simple data analysis script to a user-focused analytics product.
+
+---
+
+## 🌐 Live Demo
+
+(Insert your deployed Streamlit link here)
 
 ---
 
@@ -10,142 +16,148 @@ This project demonstrates the transition from a simple data analysis script to a
 
 This dashboard enables users to:
 
-- Upload their own CSV sales dataset
-- Automatically validate and process the data
-- Generate business-ready executive summaries
+- Upload their own transactional sales CSV
+- Automatically validate dataset structure
+- Generate executive-level business insights
 - Visualize revenue and profit trends
-- Download an automated executive report
+- Download an executive summary report
 
-The goal is to combine **data processing, validation, business insight generation, and presentation** into a single usable tool.
+The goal was to combine **data processing, validation, presentation, and product-level UI design** into a single deployable analytics tool.
 
 ---
 
 ## ✨ Key Features
 
 ### 📁 File Upload Capability
-Users can upload their own sales dataset (CSV format).  
-The app automatically processes the file.
+Users can upload their own sales dataset in CSV format.
 
-### 🧹 Data Validation & Error Handling
-The application validates:
+### 🧹 Robust Data Validation
+The app validates:
+
 - Required columns
 - Date formats
 - Numeric fields
-- File encoding issues
+- File integrity
 
-User-friendly error messages are displayed instead of Python stack traces.
+Clear, user-friendly error messages are shown instead of Python tracebacks.
 
 ### 📊 Executive Summary
-Displays:
+Automatically computes:
+
 - Total Revenue
 - Total Profit
 - Average Profit per Order
+- Profit Margin
 - Most Profitable Region
 - Most Profitable Item Type
 
-Designed in a business-friendly format.
-
 ### 📈 Visual Analytics
+
 Includes:
+
 - Monthly Revenue Trend
 - Monthly Profit Trend
-- Revenue by Sales Channel (Online vs Offline)
-- Top 5 Countries by Revenue
+- Revenue by Sales Channel
+- Clean YouTube-style dark UI theme
 
-### 📄 Downloadable Executive Report
-Users can download a generated report summarizing key insights.
+### 📄 Downloadable Report
+Users can download a generated executive summary as a `.txt` report.
+
+### 🎨 Branded UI
+- Custom logo
+- YouTube-style dark theme
+- Improved layout structure
+- Professional SaaS-style header
 
 ---
 
-## 🖼 Dashboard Preview
+## 🖼 Application Preview
 
-![Dashboard Preview](dashboard_v2.png)
+### 🔹 Before Uploading Dataset
+
+![Dashboard Before Upload](preview_before_upload.png)
+
+---
+
+### 🔹 After Uploading Dataset
+
+![Dashboard After Upload](preview_after_upload.png)
+
+---
+
+## 📂 Required Dataset Structure
+
+The uploaded CSV must include the following columns:
+
+- Region  
+- Country  
+- Item Type  
+- Sales Channel  
+- Order Date  
+- Ship Date  
+- Units Sold  
+- Total Revenue  
+- Total Cost  
+- Total Profit  
+
+The app performs case-insensitive column validation.
 
 ---
 
 ## 🗂 Project Structure
-sales-performance-automation/
-│
-├── data/
-│ └── sales.csv
-│
-├── output/
-│ ├── cleaned_data.csv
-│ └── report.txt
+sales-performance-analytics/
 │
 ├── app.py
-├── analysis.ipynb
+├── logo.png
 ├── requirements.txt
-├── dashboard_v2.png
-└── README.md
-
-
----
-
-## 📂 Required Dataset Columns
-
-The uploaded CSV must contain the following columns:
-
-- Region
-- Country
-- Item Type
-- Sales Channel
-- Order Date
-- Total Revenue
-- Total Profit
-
-If required columns are missing, the app will display a clear validation message.
+├── README.md
+└── .streamlit/
+└── config.toml
 
 ---
 
 ## 🛠 Technologies Used
 
 - Python
-- Pandas
 - Streamlit
+- Pandas
 - Matplotlib
+- Custom Streamlit theme configuration
 
 ---
 
-## 🎯 Business Objective
+## 🎯 Engineering Highlights
 
-This project was designed to shift from:
-
-> "Code that analyzes data"
-
-To:
-
-> "A usable analytics product for non-technical stakeholders."
-
-It emphasizes:
-- Clean architecture
-- Separation of preprocessing and presentation layers
-- User validation and error handling
-- Executive-ready reporting
+- Safe file ingestion using in-memory buffers
+- Case-insensitive schema validation
+- Robust numeric conversion handling
+- Graceful error stopping using `st.stop()`
+- Clean Git version control workflow
+- Cloud deployment via Streamlit Community Cloud
 
 ---
 
 ## 🔮 Future Improvements
 
-- Add sales forecasting module
-- Deploy publicly via Streamlit Cloud
-- Add user-controlled filters
-- Replace Matplotlib with interactive Plotly charts
+- Add forecasting module (time series projection)
+- Add user-controlled filters (date, region, product)
+- Switch to Plotly for interactive visualizations
 - Add downloadable PDF executive report
-- Add multi-file comparison capability
+- Add sample template download button
+- Add multi-dataset comparison
 
 ---
 
-## 📌 How to Run Locally
+## ▶️ Run Locally
 
 1. Clone the repository:
-git clone
+git clone https://github.com/YOUR_USERNAME/sales-performance-analytics.git
 
 
-2. Navigate into the folder:
+2. Navigate into the project folder:
 
 
-cd sales-performance-automation
+cd sales-performance-analytics
 
 
 3. Install dependencies:
@@ -154,7 +166,7 @@ cd sales-performance-automation
 pip install -r requirements.txt
 
 
-4. Run the app:
+4. Run the application:
 
 
 streamlit run app.py
@@ -166,13 +178,13 @@ streamlit run app.py
 
 This project demonstrates:
 
-- Data cleaning & preprocessing
-- KPI computation
-- Business insight generation
-- Validation & robust error handling
-- Dashboard development
-- Product-oriented thinking
+- Data validation & ingestion design
+- KPI computation logic
+- Executive-level reporting
+- UI/UX refinement
+- Deployment workflow
+- Git recovery & version control handling
 
-It is structured as a portfolio-ready analytics product.
+It reflects a shift from pure analysis to product-oriented engineering.
 
 ---
