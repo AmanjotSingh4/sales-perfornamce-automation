@@ -1,47 +1,56 @@
-# 📊 Sales Performance Analytics Dashboard
+# 📊 AI-Powered Sales Performance Dashboard
 
-A branded, production-ready analytics dashboard built using **Streamlit** that allows non-technical users to upload transactional sales data and instantly generate executive insights, KPIs, and visual reports.
+A production-ready analytics application built with **Streamlit**, combining structured KPI computation, automated validation, interactive visualizations, and AI-generated executive insights.
 
-This project demonstrates the transition from a simple data analysis script to a user-focused analytics product.
+This project demonstrates the evolution from a basic data analysis script into a modular, deployable, AI-enhanced business intelligence product.
 
 ---
 
-## 🌐 Live Demo
+## 🌐 Live Application
 
-(Insert your deployed Streamlit link here)
+🚀 **Streamlit Deployment:**  
+(Add your Streamlit Community Cloud link here)
 
 ---
 
 ## 🚀 Project Overview
 
-This dashboard enables users to:
+This dashboard allows non-technical users to:
 
-- Upload their own transactional sales CSV
+- Upload transactional sales data
 - Automatically validate dataset structure
-- Generate executive-level business insights
+- Generate executive-level KPI summaries
 - Visualize revenue and profit trends
-- Download an executive summary report
+- Interact with AI for strategic analysis
+- Download a structured executive summary report
 
-The goal was to combine **data processing, validation, presentation, and product-level UI design** into a single deployable analytics tool.
+The architecture separates analytics logic, visualization, AI processing, and UI layers for clean, scalable engineering.
 
 ---
 
-## ✨ Key Features
+## ✨ Core Features
 
-### 📁 File Upload Capability
-Users can upload their own sales dataset in CSV format.
+### 📁 CSV File Upload
+Users can upload their own transactional sales dataset in CSV format.
+
+---
 
 ### 🧹 Robust Data Validation
-The app validates:
 
-- Required columns
-- Date formats
-- Numeric fields
-- File integrity
+The system performs:
 
-Clear, user-friendly error messages are shown instead of Python tracebacks.
+- Required column validation
+- Case-insensitive schema checking
+- Date format validation
+- Numeric field validation
+- Safe in-memory file handling
 
-### 📊 Executive Summary
+All errors are handled gracefully with user-friendly messages.
+
+---
+
+### 📊 Executive KPI Engine
+
 Automatically computes:
 
 - Total Revenue
@@ -50,44 +59,78 @@ Automatically computes:
 - Profit Margin
 - Most Profitable Region
 - Most Profitable Item Type
+- Revenue by Sales Channel
+
+KPI logic is centralized in `kpis.py` to ensure a **single source of truth** across:
+
+- UI display
+- AI context generation
+- Downloadable reports
+
+---
+
+### 🤖 AI Strategic Summary (Groq Integration)
+
+Integrated with Groq API (OpenAI-compatible interface):
+
+- Generates executive-level summaries
+- Provides strategic insights
+- Allows user Q&A via chat interface
+- Context-aware responses based on computed KPIs
+
+The AI layer consumes structured KPI output for consistent analysis.
+
+---
+
+### 💬 Interactive AI Chat
+
+Users can:
+
+- Ask strategic questions about the dataset
+- Explore performance drivers
+- Request business-level explanations
+
+Chat history is session-managed for conversational continuity.
+
+---
 
 ### 📈 Visual Analytics
 
-Includes:
+Includes modular chart generation:
 
 - Monthly Revenue Trend
 - Monthly Profit Trend
 - Revenue by Sales Channel
-- Clean YouTube-style dark UI theme
+- Revenue by Region
 
-### 📄 Downloadable Report
-Users can download a generated executive summary as a `.txt` report.
+All visualization logic is separated into `charts.py` for maintainability.
 
-### 🎨 Branded UI
+---
+
+### 📄 Downloadable Executive Report
+
+Generates a structured executive summary as a `.txt` report based on centralized KPI logic.
+
+This ensures consistency between:
+- On-screen metrics
+- AI analysis
+- Downloaded report
+
+---
+
+### 🎨 Branded Product UI
+
 - Custom logo
-- YouTube-style dark theme
-- Improved layout structure
-- Professional SaaS-style header
-
----
-
-## 🖼 Application Preview
-
-### 🔹 Before Uploading Dataset
-
-![Dashboard Before Upload](preview_before_upload.png)
-
----
-
-### 🔹 After Uploading Dataset
-
-![Dashboard After Upload](preview_after_upload.png)
+- Dark-themed professional layout
+- Clean executive-style hierarchy
+- Wide layout configuration
+- Structured section separation
 
 ---
 
 ## 📂 Required Dataset Structure
 
-The uploaded CSV must include the following columns:
+Uploaded CSV must include:
 
 - Region  
 - Country  
@@ -100,19 +143,23 @@ The uploaded CSV must include the following columns:
 - Total Cost  
 - Total Profit  
 
-The app performs case-insensitive column validation.
+Validation is case-insensitive, but required fields must exist.
 
 ---
 
 ## 🗂 Project Structure
-sales-performance-analytics/
-│
-├── app.py
-├── logo.png
-├── requirements.txt
-├── README.md
-└── .streamlit/
-└── config.toml
+sales-performance-dashboard/
+    │
+    ├── app.py # Main Streamlit application
+    ├── kpis.py # KPI computation + summary/report logic
+    ├── charts.py # Modular visualization functions
+    ├── summary.py # AI context + Groq integration
+    ├── logo.png # Branding asset
+    ├── requirements.txt
+    ├── README.md
+    └── .streamlit/
+    └── config.toml # Theme configuration
+
 
 ---
 
@@ -122,51 +169,66 @@ sales-performance-analytics/
 - Streamlit
 - Pandas
 - Matplotlib
-- Custom Streamlit theme configuration
+- Groq API (OpenAI-compatible endpoint)
+- Modular application architecture
 
 ---
 
-## 🎯 Engineering Highlights
+## 🧠 Engineering Highlights
 
-- Safe file ingestion using in-memory buffers
-- Case-insensitive schema validation
-- Robust numeric conversion handling
-- Graceful error stopping using `st.stop()`
-- Clean Git version control workflow
+- Separation of concerns (UI, analytics, AI, visualization)
+- Centralized KPI engine (single source of truth)
+- Safe in-memory file ingestion
+- Structured schema validation
+- Session-managed AI chat
+- Modular chart rendering
+- Clean Git workflow
 - Cloud deployment via Streamlit Community Cloud
 
 ---
 
-## 🔮 Future Improvements
+## 🔮 Planned Enhancements
 
-- Add forecasting module (time series projection)
-- Add user-controlled filters (date, region, product)
-- Switch to Plotly for interactive visualizations
-- Add downloadable PDF executive report
-- Add sample template download button
-- Add multi-dataset comparison
+- Executive-grade PDF report export
+- Interactive filters (date range, region, channel)
+- Forecasting module (time-series projection)
+- Plotly-based interactive charts
+- Multi-dataset comparison
+- Role-based access control
 
 ---
 
 ## ▶️ Run Locally
 
-1. Clone the repository:
-git clone https://github.com/YOUR_USERNAME/sales-performance-analytics.git
+1️⃣ Clone the repository:
+git clone https://github.com/YOUR_USERNAME/sales-performance-dashboard.git
 
 
-2. Navigate into the project folder:
+2️⃣ Navigate into the project folder:
 
 
-cd sales-performance-analytics
+cd sales-performance-dashboard
 
 
-3. Install dependencies:
+3️⃣ Install dependencies:
 
 
 pip install -r requirements.txt
 
 
-4. Run the application:
+4️⃣ Set your Groq API key (environment variable):
+
+Windows:
+
+set GROQ_API_KEY=your_key_here
+
+
+macOS / Linux:
+
+export GROQ_API_KEY=your_key_here
+
+
+5️⃣ Run the application:
 
 
 streamlit run app.py
@@ -174,17 +236,26 @@ streamlit run app.py
 
 ---
 
-## 💼 Portfolio Note
+## 🔐 API Key Handling
+
+The application uses environment variables for API security.
+
+Do **not** hardcode API keys inside source files.
+
+For Streamlit Community Cloud deployment:
+- Add `GROQ_API_KEY` inside **App Settings → Secrets**
+
+---
+
+## 💼 Portfolio Positioning
 
 This project demonstrates:
 
-- Data validation & ingestion design
-- KPI computation logic
-- Executive-level reporting
-- UI/UX refinement
-- Deployment workflow
-- Git recovery & version control handling
+- Transition from analysis script to deployable product
+- Modular backend logic design
+- Business KPI abstraction
+- AI integration into analytics workflows
+- Clean UI/UX hierarchy
+- Production-oriented engineering thinking
 
-It reflects a shift from pure analysis to product-oriented engineering.
-
----
+It reflects a shift from pure data analysis toward AI-enabled product development.
