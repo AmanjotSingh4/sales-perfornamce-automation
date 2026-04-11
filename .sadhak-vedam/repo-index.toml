@@ -1,0 +1,14 @@
+[sadhak_vedam]
+schema_version = "1"
+runbook_schema_version = "1"
+repo = "AmanjotSingh4/sales-perfornamce-automation"
+owner = "AmanjotSingh4"
+name = "sales-perfornamce-automation"
+default_branch = "main"
+head_commit = "d3cbc135d1ae37f2a113f70f0893505447d09a68"
+runbook_path = ".sadhak-vedam/runbook.toml"
+codemap_path = ".sadhak-vedam/codemap.json"
+node_count = 11
+edge_count = 5
+source_mode = "generated"
+generated_at = "2026-04-11T11:49:01.548445+00:00"

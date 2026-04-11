@@ -1,0 +1,108 @@
+{
+  "nodes": [
+    {
+      "id": ".gitignore",
+      "type": "file",
+      "size_bytes": 44,
+      "extension": ""
+    },
+    {
+      "id": ".streamlit/config.toml",
+      "type": "file",
+      "size_bytes": 141,
+      "extension": ".toml"
+    },
+    {
+      "id": "analysis.py",
+      "type": "file",
+      "size_bytes": 633,
+      "extension": ".py"
+    },
+    {
+      "id": "app.py",
+      "type": "file",
+      "size_bytes": 4613,
+      "extension": ".py"
+    },
+    {
+      "id": "charts.py",
+      "type": "file",
+      "size_bytes": 1719,
+      "extension": ".py"
+    },
+    {
+      "id": "grok_client.py",
+      "type": "file",
+      "size_bytes": 614,
+      "extension": ".py"
+    },
+    {
+      "id": "kpis.py",
+      "type": "file",
+      "size_bytes": 1623,
+      "extension": ".py"
+    },
+    {
+      "id": "preprocess.py",
+      "type": "file",
+      "size_bytes": 448,
+      "extension": ".py"
+    },
+    {
+      "id": "report_generator.py",
+      "type": "file",
+      "size_bytes": 1330,
+      "extension": ".py"
+    },
+    {
+      "id": "requirements.txt",
+      "type": "file",
+      "size_bytes": 34,
+      "extension": ".txt"
+    },
+    {
+      "id": "summary.py",
+      "type": "file",
+      "size_bytes": 1742,
+      "extension": ".py"
+    }
+  ],
+  "edges": [
+    {
+      "source": ".streamlit",
+      "target": ".streamlit/config.toml",
+      "type": "contains"
+    },
+    {
+      "source": "app.py",
+      "target": "charts.py",
+      "type": "imports"
+    },
+    {
+      "source": "app.py",
+      "target": "kpis.py",
+      "type": "imports"
+    },
+    {
+      "source": "app.py",
+      "target": "summary.py",
+      "type": "imports"
+    },
+    {
+      "source": "summary.py",
+      "target": "grok_client.py",
+      "type": "imports"
+    }
+  ],
+  "metadata": {
+    "source": "filesystem-fallback",
+    "root": ".workdir/e2e-l0-pr-dcf1e432/repo",
+    "file_count": 11,
+    "schema_version": "1",
+    "generated_by": "sadhak-vedam-l1",
+    "generated_at": "2026-04-11T11:49:01.546297+00:00",
+    "repo": "AmanjotSingh4/sales-perfornamce-automation",
+    "source_mode": "filesystem-fallback",
+    "compatibility": "native_v1"
+  }
+}
