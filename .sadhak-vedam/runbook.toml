@@ -3,6 +3,7 @@ schema_version = "1"
 repo = "AmanjotSingh4/sales-perfornamce-automation"
 default_branch = "main"
 generated_at = "2026-04-11T11:49:01.546095+00:00"
+l0_stage_updates = 2
 
 [sadhak_vedam.triage]
 description = "L1 triage policy and safe first-line actions."
@@ -11,3 +12,14 @@ max_attempts = 1
 [sadhak_vedam.remediation]
 description = "L2 remediation policy with bounded retries."
 max_attempts = 3
+
+[sadhak_vedam.l0_state]
+timestamp = "2026-04-13T13:00:18.044780+00:00"
+stage = "after_l2_attempt_1"
+stage_summary = "Deterministic L2 fallback created a comprehensive README."
+task_type = "create_readme"
+l2_required = true
+route_to_l2 = true
+route_reason = "l2_attempt_completed"
+verification_approved = true
+changed_files = ["README.md"]
