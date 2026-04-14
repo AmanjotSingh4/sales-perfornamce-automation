@@ -3,6 +3,7 @@ schema_version = "1"
 repo = "AmanjotSingh4/sales-perfornamce-automation"
 default_branch = "main"
 generated_at = "2026-04-11T11:49:01.546095+00:00"
+history_count = 0
 
 [sadhak_vedam.triage]
 description = "L1 triage policy and safe first-line actions."
@@ -11,3 +12,14 @@ max_attempts = 1
 [sadhak_vedam.remediation]
 description = "L2 remediation policy with bounded retries."
 max_attempts = 3
+
+[sadhak_vedam.l0_state]
+timestamp = "2026-04-14T15:19:07.188573+00:00"
+error_type = "NoError"
+confidence = "1.00"
+severity = "None"
+route_hint = ""
+llm_used = true
+deterministic_score = "0.66"
+suspected_files = ""
+suspected_packages = ""
