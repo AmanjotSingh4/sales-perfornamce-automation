@@ -3,6 +3,7 @@ schema_version = "1"
 repo = "AmanjotSingh4/sales-perfornamce-automation"
 default_branch = "main"
 generated_at = "2026-04-11T11:49:01.546095+00:00"
+history_count = 0
 
 [sadhak_vedam.triage]
 description = "L1 triage policy and safe first-line actions."
@@ -11,3 +12,14 @@ max_attempts = 1
 [sadhak_vedam.remediation]
 description = "L2 remediation policy with bounded retries."
 max_attempts = 3
+
+[sadhak_vedam.l0_state]
+timestamp = "2026-04-15T07:16:14.834977+00:00"
+error_type = "DivisionByZero"
+confidence = "0.95"
+severity = "Low"
+route_hint = "Add a guard to check total_revenue > 0 before performing division and handle the zero case gracefully"
+llm_used = true
+deterministic_score = "0.40"
+suspected_files = "summary.py"
+suspected_packages = ""

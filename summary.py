@@ -6,7 +6,7 @@ def compute_kpis(df):
     total_revenue = df["Total Revenue"].sum()
     total_profit = df["Total Profit"].sum()
     avg_profit = df["Total Profit"].mean()
-    profit_margin = (total_profit / total_revenue) * 100
+    profit_margin = (total_profit / total_revenue) * 100 if total_revenue != 0 else 0
 
     most_profitable_region = (
         df.groupby("Region")["Total Profit"]
